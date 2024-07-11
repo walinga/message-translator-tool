@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>Message Translator Tool</title>
+
+		<meta name="title" content="Message Translator Tool">
+
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
+
+		<script src="./main.js"></script>
+	</head>
+	<body>
+		<main>
+			<section>
+				<div>Message Identifier</div>
+				<input id="message-id-input" placeholder="56-0527">	
+				</input>
+				<div>Message Quote</div>
+				<textarea id="quote-input" placeholder="PASTE MESSAGE QUOTE HERE">	
+				</textarea>
+				<button onclick="translateQuote(document.getElementById('message-id-input').value, document.getElementById('quote-input').value)">
+					Translate
+				</button>
+			</section>
+			<section>
+
+			</section>
+		</main>
+
+		<!-- <script src="./node_modules/clipboard/dist/clipboard.min.js"></script> -->
+		<!-- <script src="./my-clipboard.js"></script> -->
+	</body>
+</html>

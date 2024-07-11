@@ -4,11 +4,15 @@
   "description": "Portfolio site",
   "main": "my-clipboard.js",
   "dependencies": {
+    "@aws-sdk/client-lambda": "^3.163.0",
+    "@aws-sdk/client-cognito-identity": "^3.370.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.370.0",
     "clipboard": "^2.0.4"
   },
-  "devDependencies": {},
+  "type": "module",
   "scripts": {
-    "test": "echo 'hello world'"
+    "test": "echo 'hello world'",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -19,5 +23,9 @@
   "bugs": {
     "url": "https://github.com/walinga/walinga.github.io/issues"
   },
-  "homepage": "https://github.com/walinga/walinga.github.io#readme"
+  "homepage": "https://github.com/walinga/walinga.github.io#readme",
+  "devDependencies": {
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
+  }
 }
