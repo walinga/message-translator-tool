@@ -55,6 +55,24 @@ hr {
   margin: 1em 0;
 }
 
+blockquote {
+  margin: 0;
+}
+
+blockquote p {
+  padding: 15px;
+  background: #eee;
+  border-radius: 5px;
+}
+
+blockquote p::before {
+  content: '\201C';
+}
+
+blockquote p::after {
+  content: '\201D';
+}
+
 /* LAYOUT */
 
 main {
@@ -81,5 +99,23 @@ section {
 
 #quote-input {
   width: 100%;
-  height: 250px;
+  height: 200px;
+}
+
+#error-text {
+  color: red;
+}
+
+#loader {
+  border: 8px solid #f3f3f3; /* Light grey */
+  border-top: 8px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

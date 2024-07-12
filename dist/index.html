@@ -12,6 +12,7 @@
 		<link rel="stylesheet" href="style.css">
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700">
 
+		<script src="./translate.js"></script>
 		<script src="./main.js"></script>
 	</head>
 	<body>
@@ -21,11 +22,23 @@
 				<input id="message-id-input" placeholder="56-0527">	
 				</input>
 				<div>Message Quote</div>
-				<textarea id="quote-input" placeholder="PASTE MESSAGE QUOTE HERE">	
-				</textarea>
-				<button onclick="translateQuote(document.getElementById('message-id-input').value, document.getElementById('quote-input').value)">
+				<textarea id="quote-input" placeholder="PASTE MESSAGE QUOTE HERE"></textarea>
+				<button onclick="onTranslateClick()">
 					Translate
 				</button>
+				<div id="loader" style="display:none"></div>
+				<p id="error-text" style="display:none">An error occurred. Please try again later</p>
+				<div id="quote-box" style="display:none">
+					<div style="display:flex">
+						<blockquote id="matched-quote-block">
+							<p id="matched-quote"></p>
+						</blockquote>
+						<blockquote id="translated-quote-block">
+							<p id="translated-quote"></p>
+						</blockquote>
+					</div>
+					<footer>Source: <cite id="translation-source"></cite></footer>
+				</div>
 			</section>
 			<section>
 

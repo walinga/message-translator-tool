@@ -1,8 +1,5 @@
 const config = {
-  mode: "production",
-  optimization: {
-    minimize: false
-  }
+  mode: "production"
 };
 
 export default config;
