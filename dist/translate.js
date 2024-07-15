@@ -21,7 +21,7 @@ function onTranslateClick() {
         return;
     }
 
-    // TODO: Regex to check messageId format
+    // TODO: Regex to check messageId format (Tip: include CAB-03 and 50-0505M)
 
     if (quote.replace(/\s/g, '') === '') {
         alert('A quote must be entered');
