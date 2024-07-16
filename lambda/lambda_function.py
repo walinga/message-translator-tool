@@ -40,20 +40,7 @@ def extract_text(link):
         'pnum_map': pnum_map
     }
 
-def lambda_handler(event, context):
-    message_id = event['messageId']
-    quote = event['quote']
-    if (len(message_id) > 15 or len(quote) > 100000):
-        return {
-            'statusCode': 400
-        }
-
-    english_link = "https://www.messagehub.info/en/readMessage.msg?ref_num=" + message_id
-    spanish_link = "https://www.messagehub.info/es/readMessage.msg?ref_num=" + message_id
-
-    english_data = extract_text(english_link)
-    spanish_data = extract_text(spanish_link)
-
+def determine_translation(quote, english_data, spanish_data):
     english_text, raw_text, pnum_map = itemgetter('words_list', 'raw_text', 'pnum_map')(english_data)
     spanish_text, raw_text_es, pnum_map_es = itemgetter('words_list', 'raw_text', 'pnum_map')(spanish_data)
 
@@ -117,23 +104,41 @@ def lambda_handler(event, context):
     print('[Full translation]', translation)
 
     return {
+        'quote': best_match,
+        'translation': translation,
+        'paragraphNumber': start_pnum
+    }
+
+def lambda_handler(event, context):
+    message_id = event['messageId']
+    quote = event['quote']
+    if (len(message_id) > 15 or len(quote) > 100000):
+        return {
+            'statusCode': 400
+        }
+
+    english_link = "https://www.messagehub.info/en/readMessage.msg?ref_num=" + message_id
+    spanish_link = "https://www.messagehub.info/es/readMessage.msg?ref_num=" + message_id
+
+    english_data = extract_text(english_link)
+    spanish_data = extract_text(spanish_link)
+
+    translation_data = determine_translation(quote, english_data, spanish_data)
+    translation_data['source'] = spanish_link
+
+    return {
         'statusCode': 200,
-        'body': json.dumps({
-            'quote': best_match,
-            'translation': translation,
-            'source': spanish_link,
-            'paragraphNumber': start_pnum
-        })
+        'body': json.dumps(translation_data)
     }
 
 # DEBUG
 if __name__ == "__main__":
-    # resp = lambda_handler({
-    #     'messageId': '60-0515E',
-    #     'quote': "There’s where the church is failing today, on that walk. Do you know that even your own behavior can knock somebody else out of getting healed? Your misbehavior, of unconfessed sins of you believers, can cause this church to bitterly fail. And at the Day of the Judgment you’ll be responsible for every bit of it. “Oh,” you say, “now, wait a minute, Brother Branham.” Well, that’s the Truth. Think of it!"
-    #     }, {})
+    resp = lambda_handler({
+        'messageId': '57-1208',
+        'quote': "Grant, Lord. We've had difficult. Satan has fought us in every way, even for this meeting this morning: wasn't even any here to give the prayer cards that they could be lined up for the out of town people, that Thou might be able to show the exceeding abundance of Thy presence, according to a divine gift and a will by Your own great power. But Thou art God who overrules all things. You overrule difficults and circumstances."
+        }, {})
     # print(resp)
 
-    q = "So is it today! People say, “Oh, preacher, you’re too narrow-minded. You take all the pleasures away from the church, when you go to preaching against these kind of things and that kind of thing.”"
-    for w in q.split():
-        print(strip_punctuation(w))
+    # q = ""
+    # for w in q.split():
+    #     print(strip_punctuation(w))
