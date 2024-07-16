@@ -10,8 +10,8 @@ class TestStringMethods(unittest.TestCase):
     def test_determine_translation_simple(self):
         self.run_test(SIMPLE_TEST)
 
-    def test_determine_translation_paragraph_start(self):
-        self.run_test(PARAGRAPH_START_TEST)
+    def test_determine_translation_full_paragraph(self):
+        self.run_test(FULL_PARAGRAPH)
 
 if __name__ == '__main__':
     unittest.main()

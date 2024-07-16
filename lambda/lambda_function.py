@@ -48,20 +48,21 @@ def determine_translation(quote, english_data, spanish_data):
     #  -> tokenize text and quote into lists of words
     #  -> check each possible chunk of words (chunk size = len(quote))
     #  -> choose the chunk with the most matching words
-    quote_words = quote.split()
+    trimmed_text = list(map(strip_punctuation, english_text))
+    quote_words = list(map(strip_punctuation, quote.split()))
     quote_len = len(quote_words)
     quote_words_set = set(quote_words)
     quote_index = -1
     max_score = 0
     for start_i in range(len(english_text) - quote_len):
-        chunk = english_text[start_i : start_i + quote_len]
+        chunk = trimmed_text[start_i : start_i + quote_len]
         chunk_words = set(chunk)
 
         # Compare number of matching words via set intersection
         score = len(quote_words_set & chunk_words)
 
         # Add an extra point if the first words match
-        if strip_punctuation(quote_words[0]) == strip_punctuation(chunk[0]):
+        if quote_words[0] == chunk[0]:
             score += 1
 
         if score >= max_score:
@@ -133,12 +134,12 @@ def lambda_handler(event, context):
 
 # DEBUG
 if __name__ == "__main__":
-    resp = lambda_handler({
-        'messageId': '57-1208',
-        'quote': "Grant, Lord. We've had difficult. Satan has fought us in every way, even for this meeting this morning: wasn't even any here to give the prayer cards that they could be lined up for the out of town people, that Thou might be able to show the exceeding abundance of Thy presence, according to a divine gift and a will by Your own great power. But Thou art God who overrules all things. You overrule difficults and circumstances."
-        }, {})
+    # resp = lambda_handler({
+    #     'messageId': '60-0630',
+    #     'quote': "God loves to fellowship with His creature. In the garden of Eden we are told, that when man walked in the uprightness of God, God came down in the cool of the evening and fellowshipped with His children. Then, one day there was a voice came up in the Presence of God and said, “Those Your loved ones, Your children, has fallen, and they have sinned and have did that which was wrong.” You know what…?…God didn’t just select some Angel to go down and look it over, to see if it was so or not, or a certain Cherubim of the heavens, but God came Hisself, crying, “Adam, where art Thou?” God, Himself, come crying for His lost child. When He found Him hiding in the bushes, behind sewed fig leaves, He said, “Who told you you were naked?” And he could not come out and have fellowship no more with God."
+    #     }, {})
     # print(resp)
 
-    # q = ""
+    q = ""
     # for w in q.split():
     #     print(strip_punctuation(w))
