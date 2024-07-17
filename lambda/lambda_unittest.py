@@ -11,6 +11,7 @@ class TestStringMethods(unittest.TestCase):
         self.run_test(SIMPLE_TEST)
 
     def test_determine_translation_full_paragraph(self):
+        self.maxDiff = None
         self.run_test(FULL_PARAGRAPH)
 
 if __name__ == '__main__':
