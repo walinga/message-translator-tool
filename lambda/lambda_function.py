@@ -58,6 +58,19 @@ def extract_text(link):
         'word_index_map': word_index_map
     }
 
+def determine_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum):
+    delta_back = quote_index - pnum_map[prev_pnum]
+    delta_forward = pnum_map[prev_pnum+1] - quote_index
+    delta_buffer = 0 if delta_back <= 1 else PAR_DELTA_BUFFER
+    if delta_back < delta_forward:
+        es_boundary = pnum_map_es[prev_pnum] + delta_back
+    else:
+        es_boundary = pnum_map_es[prev_pnum+1] - delta_forward
+    return {
+        'es_boundary': es_boundary,
+        'delta_buffer': delta_buffer
+    }
+
 def determine_translation(quote, english_data, spanish_data):
     english_word_list, english_text, pnum_map, word_index_map = itemgetter('words_list', 'raw_text', 'pnum_map', 'word_index_map')(english_data)
     spanish_word_list, spanish_text, pnum_map_es, word_index_map_es = itemgetter('words_list', 'raw_text', 'pnum_map', 'word_index_map')(spanish_data)
@@ -103,21 +116,12 @@ def determine_translation(quote, english_data, spanish_data):
             end_pnum = pnum + 1
         prev_index = index
    
-    start_delta_back = quote_index - pnum_map[start_pnum]
-    start_delta_forward = pnum_map[start_pnum+1] - quote_index
-    start_delta_buffer = 0 if start_delta_back <= 1 else PAR_DELTA_BUFFER
-    if start_delta_back < start_delta_forward:
-        spanish_quote_start = pnum_map_es[start_pnum] + start_delta_back - start_delta_buffer
-    else:
-        spanish_quote_start = pnum_map_es[start_pnum+1] - start_delta_forward - start_delta_buffer
+    # TODO: As the start delta, use the greater of 3 words previous OR start of sentence
+    start_boundary_data = determine_quote_boundary(quote_index, pnum_map, pnum_map_es, start_pnum)
+    spanish_quote_start = start_boundary_data['es_boundary'] - start_boundary_data['delta_buffer']
 
-    end_delta_back = pnum_map[end_pnum] - quote_end_index
-    end_delta_forward = quote_end_index - pnum_map[end_pnum-1]
-    end_delta_buffer = 0 if end_delta_forward <= 1 else PAR_DELTA_BUFFER
-    if end_delta_back < end_delta_forward:
-        spanish_quote_end = pnum_map_es[end_pnum] - end_delta_back + end_delta_buffer
-    else:
-        spanish_quote_end = pnum_map_es[end_pnum-1] + end_delta_forward + end_delta_buffer
+    end_boundary_data = determine_quote_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1)
+    spanish_quote_end = end_boundary_data['es_boundary'] + end_boundary_data['delta_buffer']
 
     translation = spanish_text[word_index_map_es[spanish_quote_start] : word_index_map_es[spanish_quote_end]]
     print('[Full translation]', translation)
@@ -160,6 +164,8 @@ if __name__ == "__main__":
     #     }, {})
     # print(resp)
 
+    print(len(split_string("Let every unclean spirit that's in these people, every spirit of doubting, every spirit of fear, every denominational cling, every habit, every sickness, every disease that's among the people, leave; in the name of Jesus Christ may it come out of this group of people. And may they be free from this hour on, that they can eat the eagle food that we're believing You'll send us through the week, Lord, breaking open those Seals and showing us those mysteries that's been hid since the foundation of the world, as You promised. They are Yours, Father. In the name of Jesus Christ. Amen.")))
+    print(len(split_string("Permite que todo espíritu inmundo que está en estas personas, todo espíritu de duda, todo espíritu de temor, toda atadura denominacional, toda mala costumbre, toda enfermedad, toda dolencia que esté entre la gente, que se vaya. En el Nombre de Jesucristo, que eso salga de este grupo de personas. Y que ellos sean libres desde esta hora en adelante, para que ellos puedan comer el Alimento de Águila que estamos creyendo que Tú nos enviarás a través de la semana, Señor; abriendo esos Sellos y mostrándonos esos misterios que han sido escondidos desde la fundación del mundo, como Tú has prometido. Ellos son Tuyos, Padre. En el Nombre de Jesucristo. Amén.")))
 
     q = """
     """
