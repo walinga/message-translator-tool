@@ -107,6 +107,7 @@ def determine_translation(quote, english_data, spanish_data):
         # Compare number of matching words via set intersection
         score = len(quote_words_set & chunk_words)
 
+        # TODO: Lowercase before comparison? (If I can find an example where it's necessary)
         # Add an extra point if the first words match
         if quote_words[0] == chunk[0]:
             score += 1
@@ -152,12 +153,14 @@ def lambda_handler(event, context):
     quote = event['quote']
     if (len(message_id) > 15 or len(quote) > 100000):
         return {
-            'statusCode': 400
+            'statusCode': 400,
+            'error': 'Either the Message ID or quote provided is too long'
         }
 
     english_link = "https://www.messagehub.info/en/readMessage.msg?ref_num=" + message_id
     spanish_link = "https://www.messagehub.info/es/readMessage.msg?ref_num=" + message_id
 
+    # TODO: Return 404 if the message ID is invalid
     english_data = extract_text(english_link)
     spanish_data = extract_text(spanish_link)
 
