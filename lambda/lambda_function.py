@@ -71,6 +71,21 @@ def determine_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum):
         'delta_buffer': delta_buffer
     }
 
+# Determines the expected start oof the spanish quote
+#  -> If the english quote starts with a capital letter, find a capitalized spanish word
+#  -> Fall back to the default buffer
+def determine_start_delta_buffer(english_word_list, spanish_word_list, quote_index, start_boundary_data):
+    spanish_quote_start = start_boundary_data['es_boundary']
+    default_buffer = start_boundary_data['delta_buffer']
+    if english_word_list[quote_index][0].isupper():
+        for i in range(spanish_quote_start - default_buffer, spanish_quote_start - 10, -1):
+            word = spanish_word_list[i]
+            if word[0].isupper():
+                return spanish_quote_start - i
+
+    return default_buffer
+
+
 def determine_translation(quote, english_data, spanish_data):
     english_word_list, english_text, pnum_map, word_index_map = itemgetter('words_list', 'raw_text', 'pnum_map', 'word_index_map')(english_data)
     spanish_word_list, spanish_text, pnum_map_es, word_index_map_es = itemgetter('words_list', 'raw_text', 'pnum_map', 'word_index_map')(spanish_data)
@@ -116,9 +131,9 @@ def determine_translation(quote, english_data, spanish_data):
             end_pnum = pnum + 1
         prev_index = index
    
-    # TODO: As the start delta, use the greater of 3 words previous OR start of sentence
     start_boundary_data = determine_quote_boundary(quote_index, pnum_map, pnum_map_es, start_pnum)
-    spanish_quote_start = start_boundary_data['es_boundary'] - start_boundary_data['delta_buffer']
+    start_delta_buffer = determine_start_delta_buffer(english_word_list, spanish_word_list, quote_index, start_boundary_data)
+    spanish_quote_start = start_boundary_data['es_boundary'] - start_delta_buffer
 
     end_boundary_data = determine_quote_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1)
     spanish_quote_end = end_boundary_data['es_boundary'] + end_boundary_data['delta_buffer']
@@ -159,13 +174,15 @@ if __name__ == "__main__":
     DEBUG = True
 
     # resp = lambda_handler({
-    #     'messageId': '61-1015E',
-    #     'quote': "Over in Ecclesiastes, the 12th chapter and the 13th verse, it’s written like this, see. Let us hear the conclusion of the whole matter: Fear God, and keep his commandments: for this is the full duty of man. The conclusion of the whole matter is to “fear God.” And, when, you cannot have respects until you have fear. You’ve got to have fear of God. Solomon said also, in the Proverbs, that: The fear of God is the beginning of wisdom: The fear of God is the beginning of wisdom: Now, that don’t mean that you’re afraid of Him, but that means that you are giving Him “respects” and “reverence.” And when you respect God, you fear God. You fear that you might displease Him in some way, you fear lest you would do something wrong. You wouldn’t want to. I fear my mother. I fear my—my wife. I fear my church. I fear all of God’s servants, unless I should put a stumbling block somewhere in their way. I—I fear the people. I fear the people of the city, unless I should do something wrong that would cause them to think that I wasn’t a Christian. See, you’ve got, before you can have respects, you’ve got to have fear. And God demands it, He demands respects. God does, He demands it. And fear brings it. And we know that fear brings respects."
+    #     'messageId': '65-0218',
+    #     'quote': "Let every unclean spirit that’s in these people, every spirit of doubting, every spirit of fear, every denominational cling, every habit, every sickness, every disease that’s among the people, leave. In the Name of Jesus Christ, may it come out of this group of people. And may they be free from this hour on, that they can eat the Eagle Food that we’re believing You’ll send us through the week, Lord, breaking open those Seals and showing us those mysteries that’s been hid since the foundation of the world, as You’ve promised. They are Yours, Father. In the Name of Jesus Christ. Amen."
     #     }, {})
     # print(resp)
 
-    print(len(split_string("Let every unclean spirit that's in these people, every spirit of doubting, every spirit of fear, every denominational cling, every habit, every sickness, every disease that's among the people, leave; in the name of Jesus Christ may it come out of this group of people. And may they be free from this hour on, that they can eat the eagle food that we're believing You'll send us through the week, Lord, breaking open those Seals and showing us those mysteries that's been hid since the foundation of the world, as You promised. They are Yours, Father. In the name of Jesus Christ. Amen.")))
-    print(len(split_string("Permite que todo espíritu inmundo que está en estas personas, todo espíritu de duda, todo espíritu de temor, toda atadura denominacional, toda mala costumbre, toda enfermedad, toda dolencia que esté entre la gente, que se vaya. En el Nombre de Jesucristo, que eso salga de este grupo de personas. Y que ellos sean libres desde esta hora en adelante, para que ellos puedan comer el Alimento de Águila que estamos creyendo que Tú nos enviarás a través de la semana, Señor; abriendo esos Sellos y mostrándonos esos misterios que han sido escondidos desde la fundación del mundo, como Tú has prometido. Ellos son Tuyos, Padre. En el Nombre de Jesucristo. Amén.")))
+    # print(len(split_string("Let every unclean spirit that's in these people, every spirit of doubting, every spirit of fear, every denominational cling, every habit, every sickness, every disease that's among the people, leave; in the name of Jesus Christ may it come out of this group of people. And may they be free from this hour on, that they can eat the eagle food that we're believing You'll send us through the week, Lord, breaking open those Seals and showing us those mysteries that's been hid since the foundation of the world, as You promised. They are Yours, Father. In the name of Jesus Christ. Amen.")))
+    # print(len(split_string("Permite que todo espíritu inmundo que está en estas personas, todo espíritu de duda, todo espíritu de temor, toda atadura denominacional, toda mala costumbre, toda enfermedad, toda dolencia que esté entre la gente, que se vaya. En el Nombre de Jesucristo, que eso salga de este grupo de personas. Y que ellos sean libres desde esta hora en adelante, para que ellos puedan comer el Alimento de Águila que estamos creyendo que Tú nos enviarás a través de la semana, Señor; abriendo esos Sellos y mostrándonos esos misterios que han sido escondidos desde la fundación del mundo, como Tú has prometido. Ellos son Tuyos, Padre. En el Nombre de Jesucristo. Amén.")))
+    # for u in ["Aun", "Él", "we"]:
+    #     print(u, u[0].isupper())
 
     q = """
     """

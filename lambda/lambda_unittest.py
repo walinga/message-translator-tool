@@ -25,5 +25,8 @@ class TestStringMethods(unittest.TestCase):
         self.maxDiff = None
         self.run_test(MID_PARAGRAPH)
 
+    def test_determine_translation_match_capitalization(self):
+        self.run_test(MATCH_CAPITALIZATION)
+
 if __name__ == '__main__':
     unittest.main()
