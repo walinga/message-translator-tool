@@ -151,15 +151,15 @@ def lambda_handler(event, context):
 if __name__ == "__main__":
     DEBUG = True
 
-    # resp = lambda_handler({
-    #     'messageId': '60-0630',
-    #     'quote': "God loves to fellowship with His creature. In the garden of Eden we are told, that when man walked in the uprightness of God, God came down in the cool of the evening and fellowshipped with His children. Then, one day there was a voice came up in the Presence of God and said, “Those Your loved ones, Your children, has fallen, and they have sinned and have did that which was wrong.” You know what…?…God didn’t just select some Angel to go down and look it over, to see if it was so or not, or a certain Cherubim of the heavens, but God came Hisself, crying, “Adam, where art Thou?” God, Himself, come crying for His lost child. When He found Him hiding in the bushes, behind sewed fig leaves, He said, “Who told you you were naked?” And he could not come out and have fellowship no more with God."
-    #     }, {})
+    resp = lambda_handler({
+        'messageId': '61-1015E',
+        'quote': "Over in Ecclesiastes, the 12th chapter and the 13th verse, it’s written like this, see. Let us hear the conclusion of the whole matter: Fear God, and keep his commandments: for this is the full duty of man. The conclusion of the whole matter is to “fear God.” And, when, you cannot have respects until you have fear. You’ve got to have fear of God. Solomon said also, in the Proverbs, that: The fear of God is the beginning of wisdom: The fear of God is the beginning of wisdom: Now, that don’t mean that you’re afraid of Him, but that means that you are giving Him “respects” and “reverence.” And when you respect God, you fear God. You fear that you might displease Him in some way, you fear lest you would do something wrong. You wouldn’t want to. I fear my mother. I fear my—my wife. I fear my church. I fear all of God’s servants, unless I should put a stumbling block somewhere in their way. I—I fear the people. I fear the people of the city, unless I should do something wrong that would cause them to think that I wasn’t a Christian. See, you’ve got, before you can have respects, you’ve got to have fear. And God demands it, He demands respects. God does, He demands it. And fear brings it. And we know that fear brings respects."
+        }, {})
     # print(resp)
 
 
-    # q = "She'd pass."
-    # print(q.split())
+    # q = "Respects Jeffersonville, Indiana, USA 61-1015E 1 . . . until just awhile ago when I left the hospital, and I kind of left it in the hands of the Lord, that if . . . knowing I was a little hoarse, because I've got a cold. But I thought if Mother was well enough that I could come, why, I would be down again to get to visit with you; because when I see someone like Mama laying there and knowing that these other mothers and daddys here that's. . . . We all got to come to that place, you see, and thinking of how grateful I am that she is ready to go"
+    # print(len(q.split()))
     # print(split_string(q))
     # for w in q.split():
     #     print(strip_punctuation(w))
