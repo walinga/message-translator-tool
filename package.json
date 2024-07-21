@@ -11,7 +11,7 @@
   "type": "module",
   "scripts": {
     "test": "echo 'hello world'",
-    "build": "webpack"
+    "build": "webpack && mv dist/* ."
   },
   "repository": {
     "type": "git",

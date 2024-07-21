@@ -6,3 +6,6 @@
 ## Local Development
 - After modifying JavaScript code, run `npm run build`
 - After modifying lambda code, run `./ship_lambda.sh`, then upload the zip file from `~/Desktop` to the lambda in AWS
+
+## Deploying
+In GitHub: `Actions` > `Deploy static content to Pages`
