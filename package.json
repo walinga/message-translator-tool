@@ -11,7 +11,8 @@
   "type": "module",
   "scripts": {
     "test": "echo 'hello world'",
-    "build": "webpack && mv dist/* ."
+    "start": "python3 -m http.server",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
