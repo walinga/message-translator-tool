@@ -28,5 +28,8 @@ class TestStringMethods(unittest.TestCase):
     def test_determine_translation_match_capitalization(self):
         self.run_test(MATCH_CAPITALIZATION)
 
+    def test_determine_translation_last_paragraph(self):
+        self.run_test(LAST_PARAGRAPH)
+
 if __name__ == '__main__':
     unittest.main()

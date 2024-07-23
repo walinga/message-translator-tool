@@ -137,7 +137,7 @@ def determine_translation(quote, english_data, spanish_data):
     spanish_quote_start = start_boundary_data['es_boundary'] - start_delta_buffer
 
     end_boundary_data = determine_quote_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1)
-    spanish_quote_end = end_boundary_data['es_boundary'] + end_boundary_data['delta_buffer']
+    spanish_quote_end = min(len(spanish_word_list), end_boundary_data['es_boundary'] + end_boundary_data['delta_buffer'])
 
     translation = spanish_text[word_index_map_es[spanish_quote_start] : word_index_map_es[spanish_quote_end]]
     print('[Full translation]', translation)
@@ -177,8 +177,8 @@ if __name__ == "__main__":
     DEBUG = True
 
     # resp = lambda_handler({
-    #     'messageId': '65-0218',
-    #     'quote': "Let every unclean spirit that’s in these people, every spirit of doubting, every spirit of fear, every denominational cling, every habit, every sickness, every disease that’s among the people, leave. In the Name of Jesus Christ, may it come out of this group of people. And may they be free from this hour on, that they can eat the Eagle Food that we’re believing You’ll send us through the week, Lord, breaking open those Seals and showing us those mysteries that’s been hid since the foundation of the world, as You’ve promised. They are Yours, Father. In the Name of Jesus Christ. Amen."
+    #     'messageId': '63-0318',
+    #     'quote': "419 Blessed be the Name of the Lord! Glory to God! I love that sweet feeling. Don’t you feel That? Just the Holy Spirit, like, bathing around you, walking around with It. Oh, how wonderful! Oh, think of His mercy! I love Him, I love Him Because He first loved me And purchased my salvation On Calvary’s tree. 420 Don’t forget It, friend. Don’t forget It. Take It home with you. Stay with It. Hold It on your pillow. Don’t forget It. Stay with It. God bless you now. Brother Neville, your pastor.\n63-0318 - The First Seal\nRev. William Marrion Branham\nhttp://table.branham.org"
     #     }, {})
     # print(resp)
 
