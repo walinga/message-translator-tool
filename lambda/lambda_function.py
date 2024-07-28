@@ -160,9 +160,14 @@ def lambda_handler(event, context):
     english_link = "https://www.messagehub.info/en/readMessage.msg?ref_num=" + message_id
     spanish_link = "https://www.messagehub.info/es/readMessage.msg?ref_num=" + message_id
 
-    # TODO: Return 404 if the message ID is invalid
-    english_data = extract_text(english_link)
-    spanish_data = extract_text(spanish_link)
+    try:
+        english_data = extract_text(english_link)
+        spanish_data = extract_text(spanish_link)
+    except:
+        return {
+            'statusCode': 404,
+            'error': 'Message ID [' + message_id + '] could not be found'
+        }
 
     translation_data = determine_translation(quote, english_data, spanish_data)
     translation_data['source'] = spanish_link
@@ -177,7 +182,7 @@ if __name__ == "__main__":
     DEBUG = True
 
     # resp = lambda_handler({
-    #     'messageId': '63-0318',
+    #     'messageId': '63-0381',
     #     'quote': "419 Blessed be the Name of the Lord! Glory to God! I love that sweet feeling. Don’t you feel That? Just the Holy Spirit, like, bathing around you, walking around with It. Oh, how wonderful! Oh, think of His mercy! I love Him, I love Him Because He first loved me And purchased my salvation On Calvary’s tree. 420 Don’t forget It, friend. Don’t forget It. Take It home with you. Stay with It. Hold It on your pillow. Don’t forget It. Stay with It. God bless you now. Brother Neville, your pastor.\n63-0318 - The First Seal\nRev. William Marrion Branham\nhttp://table.branham.org"
     #     }, {})
     # print(resp)
