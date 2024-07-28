@@ -31,5 +31,9 @@ class TestStringMethods(unittest.TestCase):
     def test_determine_translation_last_paragraph(self):
         self.run_test(LAST_PARAGRAPH)
 
+    def test_determine_translation_mismatched_case(self):
+        self.maxDiff = None
+        self.run_test(MISMATCHED_CASE)
+
 if __name__ == '__main__':
     unittest.main()

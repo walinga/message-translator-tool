@@ -18,7 +18,7 @@ def strip_punctuation(s):
 # - U+002D : HYPHEN-MINUS
 # - U+2019 : RIGHT SINGLE QUOTATION MARK
 def split_string(s):
-    return list(filter(None, re.split(r'[\s!"#$&\(\*\+,\.\/:;<=>?¡¢“”…]+', s)))
+    return list(filter(None, re.split(r'[\s!"#$&\(\*\+,\.\/:;<=>?¡¢“”…—]+', s)))
 
 # Extracts the full text from the provided link
 # Returns an array of words
@@ -107,9 +107,8 @@ def determine_translation(quote, english_data, spanish_data):
         # Compare number of matching words via set intersection
         score = len(quote_words_set & chunk_words)
 
-        # TODO: Lowercase before comparison? (If I can find an example where it's necessary)
         # Add an extra point if the first words match
-        if quote_words[0] == chunk[0]:
+        if quote_words[0].lower() == chunk[0].lower():
             score += 1
 
         if score >= max_score:
@@ -183,8 +182,8 @@ if __name__ == "__main__":
     DEBUG = True
 
     # resp = lambda_handler({
-    #     'messageId': '63-0318',
-    #     'quote': "419 Blessed be the Name of the Lord! Glory to God! I love that sweet feeling. Don’t you feel That? Just the Holy Spirit, like, bathing around you, walking around with It. Oh, how wonderful! Oh, think of His mercy! I love Him, I love Him Because He first loved me And purchased my salvation On Calvary’s tree. 420 Don’t forget It, friend. Don’t forget It. Take It home with you. Stay with It. Hold It on your pillow. Don’t forget It. Stay with It. God bless you now. Brother Neville, your pastor.\n63-0318 - The First Seal\nRev. William Marrion Branham\nhttp://table.branham.org"
+    #     'messageId': '62-1122',
+    #     'quote': "Not, “Go, join this one, and go join that one, go join this one.” Wait  till the Power comes from on High. “How long?” Until. “One day? Two  days?” Wait until. Don’t take some little emotion, some little  flusteration, wait there until you are dead and buried and borned again  anew in Christ Jesus, and every pulsation of your life beats out Jesus  Christ, till you can see the Life of Christ reflected right in your—your  living, the way you go, yes, sir, till you can find that Power like they had  back there in beginning. 142 Back to a Pentecostal Inheritance. Yes, sir. That’s your Possession,  denomination is not your possession, Pentecost is your Possession, not a  Pentecostal organization, your fathers come out of such a thing, the  Pentecostal Experience is your Possession. Examine ourselves. The  sounding of the Trumpet, “What kind of a Trumpet?” The Word, God’s  Trumpet, the Holy Ghost in the Word."
     #     }, {})
     # print(resp)
 
