@@ -29,8 +29,13 @@ function splitQuotes(quoteInput) {
         const data = messageIdMatches[i];
         const index = data.index;
         const endIndex = messageIdMatches[i+1].index;
-        // TODO: Remove message title and par num from quote
-        quoteMap.set(data[0], quoteInput.slice(index, endIndex));
+        const chunk = quoteInput.slice(index, endIndex);
+        // Adjust the start of the quote to remove the paragraph number
+        const parNumMatch = chunk.match(/(?<=\s\d+)\s/);
+        const quote = parNumMatch && parNumMatch.index - index < 100
+            ? chunk.slice(parNumMatch.index)
+            : chunk;
+        quoteMap.set(data[0], quote);
     }
     return quoteMap;
 }
@@ -75,7 +80,6 @@ function translateQuotes(messageIdInput, quoteInput) {
     )).then((results) => {
         document.getElementById('quote-box').style.display = 'block';
         results.forEach((result) => {
-            console.log(result)
             const payload = result.value.payload;
             const messageId = result.value.messageId;
             if (payload.statusCode === 200) {
