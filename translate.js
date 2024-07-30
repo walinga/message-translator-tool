@@ -4,14 +4,15 @@ function handleSuccess(payload) {
     console.log("source", body.source);
 
     const quoteBox = document.getElementById('matched-quote');
-    quoteBox.textContent = quoteBox.textContent.concat(body.messageId, '\r\n', body.quote, '\r\n\r\n');
+    quoteBox.textContent = quoteBox.textContent.concat(body.messageInfo.englishTitle, '\r\n', body.quote, '\r\n\r\n');
     const translationBox = document.getElementById('translated-quote');
-    translationBox.textContent = translationBox.textContent.concat(body.messageId, '\r\n', body.translation, '\r\n\r\n');
-    document.getElementById('translation-source').textContent = document.getElementById('translation-source').textContent.concat(body.source);
+    translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, '\r\n', body.translation, '\r\n\r\n');
+    const sourceBox = document.getElementById('translation-source');
+    sourceBox.textContent = sourceBox.textContent.concat(body.source, '\r\n');
 }
 
 function handleError(messageId, payload) {
-    const errorText = payload.error || '(An unknown error occured)';
+    const errorText = '(' + payload.error + ')' || '(An unknown error occured)';
     const quoteBox = document.getElementById('matched-quote');
     quoteBox.textContent = quoteBox.textContent.concat(messageId, '\r\n', errorText, '\r\n\r\n');
     const translationBox = document.getElementById('translated-quote');

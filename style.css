@@ -66,6 +66,10 @@ blockquote p {
   white-space: pre-line;
 }
 
+footer cite {
+  white-space: pre-line;
+}
+
 /* LAYOUT */
 
 main {

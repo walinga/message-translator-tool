@@ -55,7 +55,8 @@ def extract_text(link):
         'raw_text': full_text_str,
         'words_list': words_list,
         'pnum_map': pnum_map,
-        'word_index_map': word_index_map
+        'word_index_map': word_index_map,
+        'title': soup.title.string
     }
 
 def determine_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum):
@@ -170,7 +171,11 @@ def lambda_handler(event, context):
 
     translation_data = determine_translation(quote, english_data, spanish_data)
     translation_data['source'] = spanish_link
-    translation_data['messageId'] = message_id
+    translation_data['messageInfo'] = {
+        'messageId': message_id,
+        'englishTitle': english_data['title'],
+        'spanishTitle': spanish_data['title']
+    }
 
     return {
         'statusCode': 200,
