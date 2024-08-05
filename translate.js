@@ -88,7 +88,7 @@ function performTranslation(messageId, quote, parNums) {
         })
 }
 
-function translateQuotes(messageIdInput, quoteInput) {
+function translateQuotes(quoteInput) {
     if (quoteInput.replace(/\s/g, '') === '') {
         alert('A quote must be entered');
         return;
@@ -97,19 +97,9 @@ function translateQuotes(messageIdInput, quoteInput) {
     const quoteMap = splitQuotes(quoteInput);
     console.log('quoteMap', quoteMap);
 
-    // If no message ID could be extracted, fallback to the message ID input
     if (quoteMap.size === 0) {
-        if (messageIdInput.replace(/\s/g, '') === '') {
-            alert('Could not extract message ID. Try entering a message ID');
-            return;
-        }
-
-        if (!/^\w+\-\w+$/.test(messageIdInput) || messageIdInput.length > 15) {
-            alert('Invalid message identifier. Please use the format 50-0505M');
-            return;
-        }
-
-        quoteMap.push([messageIdInput, quoteInput]);
+        alert('Could not extract message ID. Please start each quote with a message identifier such as 50-0505M');
+        return;
     }
 
     return Promise.allSettled(quoteMap.map(([messageId, quote, parNums]) => {
@@ -142,9 +132,8 @@ async function onTranslateClick() {
     document.getElementById('loader').style.display = 'block';
     document.getElementById('error-text').textContent = 'An error occurred. Please try again later';
 
-    const messageIdInput = document.getElementById('message-id-input').value;
     const quoteInput = document.getElementById('quote-input').value;
-    await translateQuotes(messageIdInput, quoteInput);
+    await translateQuotes(quoteInput);
 
     document.getElementById('loader').style.display = 'none'
 }
