@@ -116,6 +116,7 @@ function translateQuotes(quoteInput) {
                 handleError(messageId, payload);
             }
         })
+        document.getElementById('copy-translation').setAttribute("data-clipboard-text", document.getElementById('translated-quote').textContent);
     })
     .catch(err => {
         console.log(err)

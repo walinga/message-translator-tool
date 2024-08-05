@@ -6,7 +6,8 @@
   "dependencies": {
     "@aws-sdk/client-cognito-identity": "^3.370.0",
     "@aws-sdk/client-lambda": "^3.163.0",
-    "@aws-sdk/credential-provider-cognito-identity": "^3.370.0"
+    "@aws-sdk/credential-provider-cognito-identity": "^3.370.0",
+    "clipboard": "^2.0.4"
   },
   "type": "module",
   "scripts": {
