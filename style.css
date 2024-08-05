@@ -63,14 +63,11 @@ blockquote p {
   padding: 15px;
   background: #eee;
   border-radius: 5px;
+  white-space: pre-line;
 }
 
-blockquote p::before {
-  content: '\201C';
-}
-
-blockquote p::after {
-  content: '\201D';
+footer cite {
+  white-space: pre-line;
 }
 
 /* LAYOUT */
@@ -122,4 +119,9 @@ section {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+#copied-prompt {
+  margin-left: 105px;
+  display: none;
 }

@@ -1,58 +1,140 @@
-function handleSuccess(payload) {
+function handleSuccess(payload, parNums) {
     const body = JSON.parse(payload.body);
     console.log("body", body);
     console.log("source", body.source);
 
-    document.getElementById('quote-box').style.display = 'block';
-    document.getElementById('matched-quote').textContent = body.quote;
-    document.getElementById('translated-quote').textContent = body.translation;
-    document.getElementById('translation-source').textContent = body.source;
+    const endParNumText =
+        parNums && parNums[0] !== parNums[1] ? '-' + parNums[1] : '';
+    const parNumText =
+        parNums
+            ? ' (Paragraph ' + parNums[0] + endParNumText + ')'
+            : '';
+    const quoteBox = document.getElementById('matched-quote');
+    quoteBox.textContent = quoteBox.textContent.concat(body.messageInfo.englishTitle, parNumText, '\r\n', body.quote, '\r\n\r\n');
+    const translationBox = document.getElementById('translated-quote');
+    translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, parNumText, '\r\n', body.translation, '\r\n\r\n');
+
+    const sourceBox = document.getElementById('translation-source');
+    if (!sourceBox.textContent.includes(body.source)) {
+        sourceBox.textContent = sourceBox.textContent.concat(body.source, '\r\n');
+    }
 }
 
-function performTranslation(messageId, quote) {
-    if (messageId.replace(/\s/g, '') === '') {
-        alert('A message identifier must be entered');
+function handleError(messageId, payload) {
+    const errorText = '(' + payload.error + ')' || '(An unknown error occured)';
+    const quoteBox = document.getElementById('matched-quote');
+    quoteBox.textContent = quoteBox.textContent.concat(messageId, '\r\n', errorText, '\r\n\r\n');
+    const translationBox = document.getElementById('translated-quote');
+    translationBox.textContent = translationBox.textContent.concat(messageId, '\r\n', errorText, '\r\n\r\n');
+}
+
+function isEmpty(s) {
+    return s.replace(/\s/g, '') === '';
+}
+
+/**
+ * Modifies quoteMap in-place to split a chunk into multiple paragraphs.
+ */
+function splitParagraphs(messageId, chunk, quoteMap) {
+    const parNumMatches = [...chunk.matchAll(/\n(\d+) +(?=\w)/g)];
+    if (parNumMatches.length === 0) {
+        quoteMap.push([messageId, chunk]);
         return;
     }
 
-    if (!/^\w+\-\w+$/.test(messageId) || messageId.length > 15) {
-        alert('Invalid message identifier. Please use the format 50-0505M');
-        return;
-    }
+    // console.log(parNumMatches);
+    for (let i = 0; i < parNumMatches.length; i++) {
+        const match = parNumMatches[i];
+        let currentMatch = match;
+        let endMatch = parNumMatches[i+1];
+        while (endMatch && Number(currentMatch[1]) + 1 === Number(endMatch[1])) {
+            i++;
+            currentMatch = endMatch;
+            endMatch = parNumMatches[i+1];
+        }
 
-    if (quote.replace(/\s/g, '') === '') {
+        const startIndex = match.index + match[0].length;
+        const endIndex = endMatch ? endMatch.index : chunk.length;
+        const paragraph = chunk.slice(startIndex, endIndex);
+        // console.log(match[1], paragraph);
+        // console.log('================');
+        if (!isEmpty(paragraph)) {
+            quoteMap.push([messageId, paragraph, [match[1], parNumMatches[i][1]]]);
+        }
+    }
+}
+
+/**
+ * Splits the quote input into the individual quotes and extracts the message IDs.
+ * Returns a map of messageId -> quote
+ */
+function splitQuotes(quoteInput) {
+    const messageIdMatches = [...quoteInput.matchAll(/(\d{2}\-\d{4}\w?)|(\w{3}-\d{2})/g), {index: quoteInput.length}];
+    const quoteMap = [];
+    for (let i = 0; i < messageIdMatches.length - 1; i++) {
+        const data = messageIdMatches[i];
+        const index = data.index;
+        const endIndex = messageIdMatches[i+1].index;
+        const quote = quoteInput.slice(index, endIndex);
+        splitParagraphs(data[0], quote, quoteMap)
+    }
+    return quoteMap;
+}
+
+function performTranslation(messageId, quote, parNums) {
+    return translateQuote(messageId, quote)
+        .then((payload) => {
+            return { payload, messageId, parNums };
+        })
+}
+
+function translateQuotes(quoteInput) {
+    if (quoteInput.replace(/\s/g, '') === '') {
         alert('A quote must be entered');
         return;
     }
 
-    return translateQuote(messageId, quote)
-        .then(payload => {
-            console.log("Response payload", payload);
-            if (payload.statusCode === 200) {
-                return handleSuccess(payload);
-            }
+    const quoteMap = splitQuotes(quoteInput);
+    console.log('quoteMap', quoteMap);
 
-            if (payload.error) {
-                document.getElementById('error-text').textContent = payload.error;
+    if (quoteMap.size === 0) {
+        alert('Could not extract message ID. Please start each quote with a message identifier such as 50-0505M');
+        return;
+    }
+
+    return Promise.allSettled(quoteMap.map(([messageId, quote, parNums]) => {
+        // console.log('quoteMap entry', messageId, quote, parNums)
+        return performTranslation(messageId, quote, parNums)
+    })).then((results) => {
+        document.getElementById('quote-box').style.display = 'block';
+        results.forEach((result) => {
+            const payload = result.value.payload;
+            const messageId = result.value.messageId;
+            if (payload.statusCode === 200) {
+                handleSuccess(payload, result.value.parNums);
+            } else {
+                handleError(messageId, payload);
             }
-            throw new Error('An error occured while performing translation:' + JSON.stringify(payload));
         })
-        .catch(err => {
-            console.log(err)
-            document.getElementById('error-text').style.display = 'block'
-        })
+        document.getElementById('copy-translation').setAttribute("data-clipboard-text", document.getElementById('translated-quote').textContent);
+    })
+    .catch(err => {
+        console.log(err)
+        document.getElementById('error-text').style.display = 'block'
+    })
 }
 
 async function onTranslateClick() {
     document.getElementById('quote-box').style.display = 'none';
+    document.getElementById('matched-quote').textContent = '';
+    document.getElementById('translated-quote').textContent = '';
+    document.getElementById('translation-source').textContent = '';
     document.getElementById('error-text').style.display = 'none'
     document.getElementById('loader').style.display = 'block';
     document.getElementById('error-text').textContent = 'An error occurred. Please try again later';
 
-    const messageId = document.getElementById('message-id-input').value;
-    const quote = document.getElementById('quote-input').value;
-
-    await performTranslation(messageId, quote);
+    const quoteInput = document.getElementById('quote-input').value;
+    await translateQuotes(quoteInput);
 
     document.getElementById('loader').style.display = 'none'
 }

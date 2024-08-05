@@ -18,11 +18,8 @@
 	<body>
 		<main>
 			<section>
-				<div>Message Identifier</div>
-				<input id="message-id-input" placeholder="56-0527">	
-				</input>
-				<div>Message Quote</div>
-				<textarea id="quote-input" placeholder="PASTE MESSAGE QUOTE HERE"></textarea>
+				<div>Message Quotes</div>
+				<textarea id="quote-input" placeholder="PASTE MESSAGE QUOTES HERE"></textarea>
 				<button onclick="onTranslateClick()">
 					Translate
 				</button>
@@ -34,10 +31,15 @@
 							<p id="matched-quote"></p>
 						</blockquote>
 						<blockquote id="translated-quote-block">
+							<button id="copy-translation">Copy</button>
+							<span id="copied-prompt">Copied!</span>
 							<p id="translated-quote"></p>
 						</blockquote>
 					</div>
-					<footer>Source: <cite id="translation-source"></cite></footer>
+					<footer>Sources:
+						<br/>
+						<cite id="translation-source"></cite>
+					</footer>
 				</div>
 			</section>
 			<section>
@@ -45,7 +47,7 @@
 			</section>
 		</main>
 
-		<!-- <script src="./node_modules/clipboard/dist/clipboard.min.js"></script> -->
-		<!-- <script src="./my-clipboard.js"></script> -->
+		<script src="./node_modules/clipboard/dist/clipboard.min.js"></script>
+		<script src="./my-clipboard.js"></script>
 	</body>
 </html>
