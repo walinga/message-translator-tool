@@ -9,8 +9,6 @@ function handleSuccess(payload, parNums) {
         parNums
             ? ' (Paragraph ' + parNums[0] + endParNumText + ')'
             : '';
-    const quoteBox = document.getElementById('matched-quote');
-    quoteBox.textContent = quoteBox.textContent.concat(body.messageInfo.englishTitle, parNumText, '\r\n', body.quote, '\r\n\r\n');
     const translationBox = document.getElementById('translated-quote');
     translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, parNumText, '\r\n', body.translation, '\r\n\r\n');
 
@@ -126,7 +124,6 @@ function translateQuotes(quoteInput) {
 
 async function onTranslateClick() {
     document.getElementById('quote-box').style.display = 'none';
-    document.getElementById('matched-quote').textContent = '';
     document.getElementById('translated-quote').textContent = '';
     document.getElementById('translation-source').textContent = '';
     document.getElementById('error-text').style.display = 'none'
