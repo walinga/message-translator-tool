@@ -5,7 +5,8 @@ from collections import OrderedDict
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 
-PAR_DELTA_BUFFER = 3
+START_DELTA_BUFFER = 3
+END_DELTA_BUFFER = 5
 DEBUG = False
 
 # Removes punctuation from the given string
@@ -59,10 +60,10 @@ def extract_text(link):
         'title': soup.title.string
     }
 
-def determine_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum):
+def find_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum, default_buffer):
     delta_back = quote_index - pnum_map[prev_pnum]
     delta_forward = pnum_map[prev_pnum+1] - quote_index
-    delta_buffer = 0 if delta_back <= 1 else PAR_DELTA_BUFFER
+    delta_buffer = 0 if delta_back <= 1 else default_buffer
     if delta_back < delta_forward:
         es_boundary = pnum_map_es[prev_pnum] + delta_back
     else:
@@ -72,7 +73,7 @@ def determine_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum):
         'delta_buffer': delta_buffer
     }
 
-# Determines the expected start oof the spanish quote
+# Determines the expected start of the spanish quote
 #  -> If the english quote starts with a capital letter, find a capitalized spanish word
 #  -> Fall back to the default buffer
 def determine_start_delta_buffer(english_word_list, spanish_word_list, quote_index, start_boundary_data):
@@ -132,11 +133,11 @@ def determine_translation(quote, english_data, spanish_data):
             end_pnum = pnum + 1
         prev_index = index
    
-    start_boundary_data = determine_quote_boundary(quote_index, pnum_map, pnum_map_es, start_pnum)
+    start_boundary_data = find_quote_boundary(quote_index, pnum_map, pnum_map_es, start_pnum, START_DELTA_BUFFER)
     start_delta_buffer = determine_start_delta_buffer(english_word_list, spanish_word_list, quote_index, start_boundary_data)
     spanish_quote_start = start_boundary_data['es_boundary'] - start_delta_buffer
 
-    end_boundary_data = determine_quote_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1)
+    end_boundary_data = find_quote_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1, END_DELTA_BUFFER)
     spanish_quote_end = min(len(spanish_word_list), end_boundary_data['es_boundary'] + end_boundary_data['delta_buffer'])
 
     translation = spanish_text[word_index_map_es[spanish_quote_start] : word_index_map_es[spanish_quote_end]]
@@ -186,11 +187,11 @@ def lambda_handler(event, context):
 if __name__ == "__main__":
     DEBUG = True
 
-    # resp = lambda_handler({
-    #     'messageId': '62-1122',
-    #     'quote': "Not, “Go, join this one, and go join that one, go join this one.” Wait  till the Power comes from on High. “How long?” Until. “One day? Two  days?” Wait until. Don’t take some little emotion, some little  flusteration, wait there until you are dead and buried and borned again  anew in Christ Jesus, and every pulsation of your life beats out Jesus  Christ, till you can see the Life of Christ reflected right in your—your  living, the way you go, yes, sir, till you can find that Power like they had  back there in beginning. 142 Back to a Pentecostal Inheritance. Yes, sir. That’s your Possession,  denomination is not your possession, Pentecost is your Possession, not a  Pentecostal organization, your fathers come out of such a thing, the  Pentecostal Experience is your Possession. Examine ourselves. The  sounding of the Trumpet, “What kind of a Trumpet?” The Word, God’s  Trumpet, the Holy Ghost in the Word."
-    #     }, {})
-    # print(resp)
+    resp = lambda_handler({
+        'messageId': '53-1018',
+        'quote': "I said, “God loved Israel and said so in the Bible; and He never did say that He loved us in that way.” When, I said, “But He had…That was His first love was Israel.” And yet when Israel got out of the will of God, God poured out the judgments of Heaven upon Israel. And we will not escape the judgments of God. If David was a man after God’s Own heart, and when David sinned before God, God made David reap for what he sowed, and we’ll never come short of that. Whether it’s a individual, church, community, or a nation, God will require judgment of sin. Amen.\n\n24 Now notice, oh, I just love to think of all those examples of what God gave us, to look back over in the Old Testament, to see what God did then; that’s just what He is today for He’s the same yesterday, today and forever. And if you’ll notice, the people had got out of God’s will. "
+        }, {})
+    print(resp)
 
     # print(len(split_string("Let every unclean spirit that's in these people, every spirit of doubting, every spirit of fear, every denominational cling, every habit, every sickness, every disease that's among the people, leave; in the name of Jesus Christ may it come out of this group of people. And may they be free from this hour on, that they can eat the eagle food that we're believing You'll send us through the week, Lord, breaking open those Seals and showing us those mysteries that's been hid since the foundation of the world, as You promised. They are Yours, Father. In the name of Jesus Christ. Amen.")))
     # print(len(split_string("Permite que todo espíritu inmundo que está en estas personas, todo espíritu de duda, todo espíritu de temor, toda atadura denominacional, toda mala costumbre, toda enfermedad, toda dolencia que esté entre la gente, que se vaya. En el Nombre de Jesucristo, que eso salga de este grupo de personas. Y que ellos sean libres desde esta hora en adelante, para que ellos puedan comer el Alimento de Águila que estamos creyendo que Tú nos enviarás a través de la semana, Señor; abriendo esos Sellos y mostrándonos esos misterios que han sido escondidos desde la fundación del mundo, como Tú has prometido. Ellos son Tuyos, Padre. En el Nombre de Jesucristo. Amén.")))
