@@ -40,22 +40,20 @@ function splitParagraphs(messageId, chunk, quoteMap) {
         return;
     }
 
-    // console.log(parNumMatches);
     for (let i = 0; i < parNumMatches.length; i++) {
         const match = parNumMatches[i];
         let currentMatch = match;
         let endMatch = parNumMatches[i+1];
-        while (endMatch && Number(currentMatch[1]) + 1 === Number(endMatch[1])) {
-            i++;
-            currentMatch = endMatch;
-            endMatch = parNumMatches[i+1];
-        }
+        // NOTE: Uncomment to enable sending multiple pars in one request
+        // while (endMatch && Number(currentMatch[1]) + 1 === Number(endMatch[1])) {
+        //     i++;
+        //     currentMatch = endMatch;
+        //     endMatch = parNumMatches[i+1];
+        // }
 
         const startIndex = match.index + match[0].length;
         const endIndex = endMatch ? endMatch.index : chunk.length;
         const paragraph = chunk.slice(startIndex, endIndex);
-        // console.log(match[1], paragraph);
-        // console.log('================');
         if (!isEmpty(paragraph)) {
             quoteMap.push([messageId, paragraph, [match[1], parNumMatches[i][1]]]);
         }
