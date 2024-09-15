@@ -124,14 +124,11 @@ def determine_translation(quote, english_data, spanish_data):
     # Determine start/end paragraph
     start_pnum = 1
     end_pnum = -1
-    prev_index = -1
-    prev_pnum = -1
     for pnum, index in pnum_map.items():
         if quote_index >= index:
             start_pnum = pnum
         if quote_end_index >= index:
             end_pnum = pnum + 1
-        prev_index = index
    
     start_boundary_data = find_quote_boundary(quote_index, pnum_map, pnum_map_es, start_pnum, START_DELTA_BUFFER)
     start_delta_buffer = determine_start_delta_buffer(english_word_list, spanish_word_list, quote_index, start_boundary_data)

@@ -3,14 +3,14 @@ function handleSuccess(payload, parNums) {
     console.log("body", body);
     console.log("source", body.source);
 
-    const endParNumText =
-        parNums && parNums[0] !== parNums[1] ? '-' + parNums[1] : '';
-    const parNumText =
-        parNums
-            ? ' (Paragraph ' + parNums[0] + endParNumText + ')'
-            : '';
+    // const endParNumText =
+    //     parNums && parNums[0] !== parNums[1] ? '-' + parNums[1] : '';
+    // const parNumText =
+    //     parNums
+    //         ? ' (Paragraph ' + parNums[0] + endParNumText + ')'
+    //         : '';
     const translationBox = document.getElementById('translated-quote');
-    translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, parNumText, '\r\n', body.translation, '\r\n\r\n');
+    translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, '\r\n', parNums[0] + ' ' + body.translation, '\r\n\r\n');
 
     const sourceBox = document.getElementById('translation-source');
     if (!sourceBox.textContent.includes(body.source)) {
