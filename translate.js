@@ -9,8 +9,6 @@ function handleSuccess(payload, parNums) {
         parNums
             ? ' (Paragraph ' + parNums[0] + endParNumText + ')'
             : '';
-    const quoteBox = document.getElementById('matched-quote');
-    quoteBox.textContent = quoteBox.textContent.concat(body.messageInfo.englishTitle, parNumText, '\r\n', body.quote, '\r\n\r\n');
     const translationBox = document.getElementById('translated-quote');
     translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, parNumText, '\r\n', body.translation, '\r\n\r\n');
 
@@ -42,22 +40,20 @@ function splitParagraphs(messageId, chunk, quoteMap) {
         return;
     }
 
-    // console.log(parNumMatches);
     for (let i = 0; i < parNumMatches.length; i++) {
         const match = parNumMatches[i];
         let currentMatch = match;
         let endMatch = parNumMatches[i+1];
-        while (endMatch && Number(currentMatch[1]) + 1 === Number(endMatch[1])) {
-            i++;
-            currentMatch = endMatch;
-            endMatch = parNumMatches[i+1];
-        }
+        // NOTE: Uncomment to enable sending multiple pars in one request
+        // while (endMatch && Number(currentMatch[1]) + 1 === Number(endMatch[1])) {
+        //     i++;
+        //     currentMatch = endMatch;
+        //     endMatch = parNumMatches[i+1];
+        // }
 
         const startIndex = match.index + match[0].length;
         const endIndex = endMatch ? endMatch.index : chunk.length;
         const paragraph = chunk.slice(startIndex, endIndex);
-        // console.log(match[1], paragraph);
-        // console.log('================');
         if (!isEmpty(paragraph)) {
             quoteMap.push([messageId, paragraph, [match[1], parNumMatches[i][1]]]);
         }
@@ -126,7 +122,6 @@ function translateQuotes(quoteInput) {
 
 async function onTranslateClick() {
     document.getElementById('quote-box').style.display = 'none';
-    document.getElementById('matched-quote').textContent = '';
     document.getElementById('translated-quote').textContent = '';
     document.getElementById('translation-source').textContent = '';
     document.getElementById('error-text').style.display = 'none'
