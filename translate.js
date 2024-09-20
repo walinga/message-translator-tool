@@ -1,16 +1,13 @@
-function handleSuccess(payload, parNums) {
+function handleSuccess(payload, parNums, shouldIncludeTitle) {
     const body = JSON.parse(payload.body);
     console.log("body", body);
     console.log("source", body.source);
 
-    // const endParNumText =
-    //     parNums && parNums[0] !== parNums[1] ? '-' + parNums[1] : '';
-    // const parNumText =
-    //     parNums
-    //         ? ' (Paragraph ' + parNums[0] + endParNumText + ')'
-    //         : '';
     const translationBox = document.getElementById('translated-quote');
-    translationBox.textContent = translationBox.textContent.concat(body.messageInfo.spanishTitle, '\r\n', parNums[0] + ' ' + body.translation, '\r\n\r\n');
+    if (shouldIncludeTitle) {
+        translationBox.textContent = translationBox.textContent.concat('-'.repeat(50), '\r\n', body.messageInfo.spanishTitle, '\r\n');
+    }
+    translationBox.textContent = translationBox.textContent.concat(parNums[0] + ' ' + body.translation, '\r\n\r\n');
 
     const sourceBox = document.getElementById('translation-source');
     if (!sourceBox.textContent.includes(body.source)) {
@@ -20,8 +17,6 @@ function handleSuccess(payload, parNums) {
 
 function handleError(messageId, payload) {
     const errorText = '(' + payload.error + ')' || '(An unknown error occured)';
-    const quoteBox = document.getElementById('matched-quote');
-    quoteBox.textContent = quoteBox.textContent.concat(messageId, '\r\n', errorText, '\r\n\r\n');
     const translationBox = document.getElementById('translated-quote');
     translationBox.textContent = translationBox.textContent.concat(messageId, '\r\n', errorText, '\r\n\r\n');
 }
@@ -103,11 +98,14 @@ function translateQuotes(quoteInput) {
         return performTranslation(messageId, quote, parNums)
     })).then((results) => {
         document.getElementById('quote-box').style.display = 'block';
+        let prevMessageId;
         results.forEach((result) => {
             const payload = result.value.payload;
             const messageId = result.value.messageId;
+            const shouldIncludeTitle = prevMessageId !== messageId;
+            prevMessageId = messageId;
             if (payload.statusCode === 200) {
-                handleSuccess(payload, result.value.parNums);
+                handleSuccess(payload, result.value.parNums, shouldIncludeTitle);
             } else {
                 handleError(messageId, payload);
             }

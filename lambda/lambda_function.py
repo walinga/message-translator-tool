@@ -126,6 +126,10 @@ def determine_translation(quote, english_data, spanish_data):
         if quote_words[0].lower() == chunk[0].lower():
             score += 1
 
+        # DEBUG
+        # if start_i > pnum_map[21] and start_i < pnum_map[23]:
+        #     print(chunk[0], chunk[-1], score)
+
         if score >= max_score:
             max_score = score
             quote_index = start_i
