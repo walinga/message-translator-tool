@@ -60,7 +60,7 @@ def extract_text(link):
         'title': soup.title.string
     }
 
-def find_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum, default_buffer):
+def find_start_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum, default_buffer):
     delta_back = quote_index - pnum_map[prev_pnum]
     delta_forward = pnum_map[prev_pnum+1] - quote_index
     delta_buffer = 0 if delta_back <= 1 else default_buffer
@@ -68,6 +68,19 @@ def find_quote_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum, default_b
         es_boundary = pnum_map_es[prev_pnum] + delta_back
     else:
         es_boundary = pnum_map_es[prev_pnum+1] - delta_forward
+    return {
+        'es_boundary': es_boundary,
+        'delta_buffer': delta_buffer
+    }
+
+def find_end_boundary(quote_index, pnum_map, pnum_map_es, prev_pnum, default_buffer):
+    delta_back = quote_index - pnum_map[prev_pnum]
+    delta_forward = pnum_map[prev_pnum+1] - quote_index
+    delta_buffer = 0 if delta_back < 10 or delta_forward < 10 else default_buffer
+    if delta_back < delta_forward:
+        es_boundary = pnum_map_es[prev_pnum] + (0 if delta_back < 10 else delta_back)
+    else:
+        es_boundary = pnum_map_es[prev_pnum+1] - (0 if delta_forward < 10 else delta_forward)
     return {
         'es_boundary': es_boundary,
         'delta_buffer': delta_buffer
@@ -130,11 +143,11 @@ def determine_translation(quote, english_data, spanish_data):
         if quote_end_index >= index:
             end_pnum = pnum + 1
    
-    start_boundary_data = find_quote_boundary(quote_index, pnum_map, pnum_map_es, start_pnum, START_DELTA_BUFFER)
+    start_boundary_data = find_start_boundary(quote_index, pnum_map, pnum_map_es, start_pnum, START_DELTA_BUFFER)
     start_delta_buffer = determine_start_delta_buffer(english_word_list, spanish_word_list, quote_index, start_boundary_data)
     spanish_quote_start = start_boundary_data['es_boundary'] - start_delta_buffer
 
-    end_boundary_data = find_quote_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1, END_DELTA_BUFFER)
+    end_boundary_data = find_end_boundary(quote_end_index, pnum_map, pnum_map_es, end_pnum - 1, END_DELTA_BUFFER)
     spanish_quote_end = min(len(spanish_word_list), end_boundary_data['es_boundary'] + end_boundary_data['delta_buffer'])
 
     translation = spanish_text[word_index_map_es[spanish_quote_start] : word_index_map_es[spanish_quote_end]]
@@ -185,8 +198,9 @@ if __name__ == "__main__":
     DEBUG = True
 
     resp = lambda_handler({
-        'messageId': '53-1018',
-        'quote': "I said, “God loved Israel and said so in the Bible; and He never did say that He loved us in that way.” When, I said, “But He had…That was His first love was Israel.” And yet when Israel got out of the will of God, God poured out the judgments of Heaven upon Israel. And we will not escape the judgments of God. If David was a man after God’s Own heart, and when David sinned before God, God made David reap for what he sowed, and we’ll never come short of that. Whether it’s a individual, church, community, or a nation, God will require judgment of sin. Amen.\n\n24 Now notice, oh, I just love to think of all those examples of what God gave us, to look back over in the Old Testament, to see what God did then; that’s just what He is today for He’s the same yesterday, today and forever. And if you’ll notice, the people had got out of God’s will. "
+        'messageId': '56-0801',
+        # TODO: Debug quote start
+        'quote': "You’ve got one of the best churches I ever walked into in my life of\nanywhere, on any continent. Life Tabernacle’s one of my favorites. It\nbreaks my heart to see you letting the world reach into you the way\nyou’re doing. So don’t do that no more. Snap out of it. Pray out of it,\nand let God come back and take over. Submit yourselves to God and get\nthe old fashion blessing back again.\nAnd I tell you, don’t let the world creep into you. Don’t let the world\nget into your churches, brethren. Pray it out, fast it out until God comes\ndown and takes a hold. That’s right. Keep the joy of the Lord among the\nsaints. Keep them prayed up. And guard every little place.\n"
         }, {})
     print(resp)
 
